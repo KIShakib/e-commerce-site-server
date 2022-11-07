@@ -39,6 +39,12 @@ async function run() {
             const foods = await cursor.limit(3).toArray();
             res.send(foods)
         })
+        app.get("/foods", async (req, res) => {
+            const query = {};
+            const cursor = foodCollection.find(query);
+            const foods = await cursor.toArray();
+            res.send(foods)
+        })
 
     }
     catch (error) {
