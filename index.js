@@ -67,12 +67,21 @@ async function run() {
         })
 
         // Review By Id
-        app.get("/reviewbyid:id", async (req, res) => {
+        app.get("/reviewbyid/:id", async (req, res) => {
             const id = req.params.id;
             const query = { foodId: id };
             const cursor = reviewCollection.find(query);
             const reviewById = await cursor.sort({ addedTimeEncrypted: -1 }).toArray();
             res.send(reviewById)
+        })
+
+        // Review By User Gmail
+        app.get("/myallreview/:email", async (req, res) => {
+            const email = req.params.email;
+            const query = { reviewerEmail: email };
+            const cursor = reviewCollection.find(query);
+            const myAllReview = await cursor.sort({ addedTimeEncrypted: -1 }).toArray();
+            res.send(myAllReview)
         })
 
 
