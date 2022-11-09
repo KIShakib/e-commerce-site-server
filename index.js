@@ -23,7 +23,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 // Database Function
 
-async function run() {
+async function dataBase() {
     try {
         const foodCollection = client.db("shakibs-kitchen").collection("foods");
         const reviewCollection = client.db("shakibs-kitchen").collection("reviews");
@@ -84,23 +84,16 @@ async function run() {
             res.send(myAllReview)
         })
 
-
     }
     catch (error) {
-        // console.log((error.name).bgRed);
-        // console.log((error.message).bgCyan.bold);
-        // console.log((error.stack).bgRed.bold);
         console.log(error);
     }
 }
-run()
-
-
-
+dataBase()
 
 
 
 // Listen
 app.listen(port, () => {
-    console.log(`Server Is Running On ${port}`.bgCyan.bold);
+    console.log(`Server Is Running On ${port}`.bgRed.bold);
 })
