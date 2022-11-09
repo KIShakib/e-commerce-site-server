@@ -93,6 +93,27 @@ async function dataBase() {
             res.send(result);
         })
 
+
+        // Update Specific User Specific Review
+        app.patch("/updatereview/:_id/:reviewerEmail", async (req, res) => {
+            const id = req.params._id;
+            const reviewerEmail = req.params.reviewerEmail;
+            const updatedReview = req.body.updatedReview;
+            const reviewTextEdit = updatedReview.reviewTextEdit;
+            const newRatings = updatedReview.newRatings
+            console.log(id, reviewerEmail, reviewTextEdit, newRatings);
+
+            const query = { _id: ObjectId(id), reviewerEmail: reviewerEmail };
+            const updateDoc = {
+                $set: {
+                    reviewText: reviewTextEdit,
+                    ratings: newRatings
+                }
+            }
+            const result = await reviewCollection.updateOne(query, updateDoc)
+            res.send(result);
+        })
+
     }
     catch (error) {
         console.log(error);
