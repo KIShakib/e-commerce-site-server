@@ -84,6 +84,15 @@ async function dataBase() {
             res.send(myAllReview)
         })
 
+        // Delete Review By ID
+        app.delete("/deletereview/:id/:reviewerEmail", async (req, res) => {
+            const id = req.params.id;
+            const reviewerEmail = req.params.reviewerEmail;
+            const query = { _id: ObjectId(id), reviewerEmail: reviewerEmail };
+            const result = await reviewCollection.deleteOne(query)
+            res.send(result);
+        })
+
     }
     catch (error) {
         console.log(error);
