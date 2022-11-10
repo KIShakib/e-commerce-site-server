@@ -12,10 +12,28 @@ app.use(cors());
 app.use(express.json());
 
 
-// API
+// Root API
 app.get("/", (req, res) => {
     res.send("Shakibs-kitchen Server Is Running...")
 });
+
+
+// JWT Verification
+function verifyJWT(req, res, next) {
+    const authHeader = req.headers.authorization
+    if (!authHeader) {
+        return res.status(401).send({ message: "UnAuthorized User" });
+    }
+    const token = authHeader.split(" ")[1];
+
+    jwt.verify(token, process.env.SECRET_TOKEN, function (err, decoded) {
+        if (err) {
+            return res.status(403).send({ message: "UnAuthorized Access" })
+        }
+        req.decoded = decoded;
+        next();
+    })
+}
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@mogodb-practice.uoisaxb.mongodb.net/?retryWrites=true&w=majority`;
@@ -76,9 +94,18 @@ async function dataBase() {
         })
 
         // Review By User Gmail
-        app.get("/myallreview/:email", async (req, res) => {
+        app.get("/myallreview/:email", verifyJWT, async (req, res) => {
             const email = req.params.email;
-            const query = { reviewerEmail: email };
+            if (req.decoded === req.params.email) {
+                res.status(403).send("Invalid user");
+            }
+            let query = {};
+            if (req.params.email) {
+                query = {
+                    reviewerEmail: email
+                }
+            }
+            // const query = { reviewerEmail: email };
             const cursor = reviewCollection.find(query);
             const myAllReview = await cursor.sort({ addedTimeEncrypted: -1 }).toArray();
             res.send(myAllReview)
@@ -112,6 +139,16 @@ async function dataBase() {
             }
             const result = await reviewCollection.updateOne(query, updateDoc)
             res.send(result);
+        })
+
+
+
+        // JWT API
+        app.post("/jwt", (req, res) => {
+            const user = req.body;
+            console.log(req.body);
+            const token = jwt.sign(user, process.env.SECRET_TOKEN, { expiresIn: "24h" });
+            res.send({ token });
         })
 
     }
