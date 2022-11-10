@@ -146,7 +146,6 @@ async function dataBase() {
         // JWT API
         app.post("/jwt", (req, res) => {
             const user = req.body;
-            console.log(req.body);
             const token = jwt.sign(user, process.env.SECRET_TOKEN, { expiresIn: "24h" });
             res.send({ token });
         })
